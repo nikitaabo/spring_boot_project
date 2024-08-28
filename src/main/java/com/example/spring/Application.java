@@ -2,18 +2,17 @@ package com.example.spring;
 
 import com.example.spring.models.Book;
 import com.example.spring.services.BookService;
+import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.math.BigDecimal;
-
 @SpringBootApplication
 public class Application {
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
