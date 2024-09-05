@@ -4,6 +4,7 @@ import com.example.spring.models.Book;
 import com.example.spring.repositories.SpecificationProvider;
 import com.example.spring.repositories.SpecificationProviderManager;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ public class BookSpecificationProviderManager implements SpecificationProviderMa
         return specificationProviderList.stream()
                 .filter(provider -> provider.getKey().equals(key))
                 .findFirst().orElseThrow(
-                        () -> new RuntimeException("Couldn't find specification with key: " + key));
+                        () -> new NoSuchElementException("Couldn't find specification with key: "
+                                + key));
     }
 }
