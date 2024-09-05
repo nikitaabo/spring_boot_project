@@ -1,21 +1,19 @@
 package com.example.spring.dto;
 
-import com.example.spring.validator.UniqueIsbn;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
 public class CreateBookRequestDto {
-    @NotNull
+    @NotBlank
     private String title;
-    @NotNull
+    @NotBlank
     private String author;
-    @NotNull
-    @UniqueIsbn
+    @NotBlank
     private String isbn;
-    @NotNull
+    @NotBlank
     @Min(0)
     private BigDecimal price;
     private String description;
