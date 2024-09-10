@@ -6,7 +6,6 @@ import com.example.spring.exception.RegistrationException;
 import com.example.spring.mapper.UserMapper;
 import com.example.spring.models.User;
 import com.example.spring.repositories.user.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +18,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto register(UserRegistrationRequestDto registrationRequestDto)
             throws RegistrationException {
-        Optional<User> userFromDb = userRepository.findByEmail(registrationRequestDto.getEmail());
-        if (userFromDb.isPresent()) {
+        if (userRepository.existsByEmail(registrationRequestDto.getEmail())) {
             throw new RegistrationException("User with email " + registrationRequestDto.getEmail()
                     + " already exists");
         }
-        return userMapper.toDto(userRepository.save(userMapper.toModel(registrationRequestDto)));
+        User user = userMapper.toModel(registrationRequestDto);
+        return userMapper.toDto(userRepository.save(user));
     }
 }
