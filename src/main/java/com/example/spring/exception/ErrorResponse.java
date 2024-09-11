@@ -1,10 +1,8 @@
 package com.example.spring.exception;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ErrorResponse {
     private String error;
     private String message;
