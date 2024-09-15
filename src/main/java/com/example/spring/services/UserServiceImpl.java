@@ -4,9 +4,14 @@ import com.example.spring.dto.UserRegistrationRequestDto;
 import com.example.spring.dto.UserResponseDto;
 import com.example.spring.exception.RegistrationException;
 import com.example.spring.mapper.UserMapper;
+import com.example.spring.models.Role;
 import com.example.spring.models.User;
+import com.example.spring.models.enums.RoleName;
+import com.example.spring.repositories.role.RoleRepository;
 import com.example.spring.repositories.user.UserRepository;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto registrationRequestDto)
@@ -23,6 +30,9 @@ public class UserServiceImpl implements UserService {
                     + " already exists");
         }
         User user = userMapper.toModel(registrationRequestDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER);
+        user.setRoles(Set.of(userRole));
         return userMapper.toDto(userRepository.save(user));
     }
 }
