@@ -1,8 +1,11 @@
 package com.example.spring.controller;
 
+import com.example.spring.dto.UserLoginRequestDto;
+import com.example.spring.dto.UserLoginResponseDto;
 import com.example.spring.dto.UserRegistrationRequestDto;
 import com.example.spring.dto.UserResponseDto;
 import com.example.spring.exception.RegistrationException;
+import com.example.spring.security.AuthenticationService;
 import com.example.spring.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,11 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthenticationController {
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/registration")
     @Operation(summary = "Register a new user", description = "Create a new user and save it in DB")
     public UserResponseDto registerUser(@RequestBody @Valid UserRegistrationRequestDto request)
             throws RegistrationException {
         return userService.register(request);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "Login", description = "Authenticates an user and returns JWT token")
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto request) {
+        return authenticationService.authenticate(request);
     }
 }
