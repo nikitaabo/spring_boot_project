@@ -10,6 +10,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -41,14 +44,14 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping
     @Operation(summary = "Get all categories", description = "Get a list of available categories")
-    public List<CategoryResponseDto> getAll() {
+    public List<CategoryResponseDto> getAll(@ParameterObject @PageableDefault Pageable pageable) {
         return categoryService.findAll();
     }
 
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     @Operation(summary = "Get category", description = "Get a category by id")
-    public CategoryResponseDto getCategoryById(@PathVariable Long id) {
+    public CategoryResponseDto getCategoryById(@PathVariable @Positive Long id) {
         return categoryService.getById(id);
     }
 
@@ -64,14 +67,14 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a category", description = "Delete a category by id")
-    public void deleteCategory(@PathVariable Long id) {
+    public void deleteCategory(@PathVariable @Positive Long id) {
         categoryService.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/books")
     @Operation(summary = "Get books", description = "Get books by category id")
-    public List<BookDto> getBooksByCategoryId(@PathVariable Long id) {
+    public List<BookDto> getBooksByCategoryId(@PathVariable @Positive Long id) {
         return categoryService.getBooksByCategoriesId(id);
     }
 }

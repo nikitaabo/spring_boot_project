@@ -42,7 +42,7 @@ public class Book {
     private String description;
     private String coverImage;
     private boolean isDeleted = false;
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(
             name = "books_categories",
             joinColumns = @JoinColumn(name = "book_id"),

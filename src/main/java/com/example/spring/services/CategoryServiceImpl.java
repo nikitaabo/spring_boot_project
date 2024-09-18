@@ -10,7 +10,6 @@ import com.example.spring.models.Category;
 import com.example.spring.repositories.book.BookRepository;
 import com.example.spring.repositories.category.CategoryRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDto getById(Long id) {
         return categoryMapper.toResponse(categoryRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Couldn't find category with id: " + id)
+                () -> new EntityNotFoundException("Couldn't find category with id: " + id)
         ));
     }
 
