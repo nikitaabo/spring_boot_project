@@ -5,9 +5,11 @@ import com.example.spring.dto.UserResponseDto;
 import com.example.spring.exception.RegistrationException;
 import com.example.spring.mapper.UserMapper;
 import com.example.spring.models.Role;
+import com.example.spring.models.ShoppingCart;
 import com.example.spring.models.User;
 import com.example.spring.models.enums.RoleName;
 import com.example.spring.repositories.role.RoleRepository;
+import com.example.spring.repositories.shopping.cart.ShoppingCartRepository;
 import com.example.spring.repositories.user.UserRepository;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto registrationRequestDto)
@@ -33,6 +36,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER);
         user.setRoles(Set.of(userRole));
-        return userMapper.toDto(userRepository.save(user));
+        UserResponseDto savedUser = userMapper.toDto(userRepository.save(user));
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
+        return savedUser;
     }
 }
