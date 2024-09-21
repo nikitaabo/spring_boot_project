@@ -15,6 +15,8 @@ import com.example.spring.models.User;
 import com.example.spring.repositories.book.BookRepository;
 import com.example.spring.repositories.cart.item.CartItemRepository;
 import com.example.spring.repositories.shopping.cart.ShoppingCartRepository;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartDto getCart(String email) {
-        return shoppingCartMapper.toDto(shoppingCartRepository.findByUser_Email(email));
+        return shoppingCartMapper.toDto(shoppingCartRepository.findByUserEmail(email));
     }
 
     @Override
@@ -38,10 +40,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Optional<Book> optionalBook = bookRepository.findById(request.bookId());
         Book book = optionalBook.orElseThrow(
                 () -> new EntityNotFoundException("There is not such book"));
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUser_Email(user.getEmail());
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserEmail(user.getEmail());
         if (cartItemRepository.existsByBook(book)) {
-            throw new DataProcessingException("Cart item with book " + book.getId()
-                    + " already exists", null);
+            List<CartItem> cartItemsByBook = cartItemRepository.findByBook(book);
+            for (CartItem cartItem : cartItemsByBook) {
+                if (Objects.equals(cartItem.getShoppingCart().getId(), shoppingCart.getId())) {
+                    throw new DataProcessingException("Cart item with book " + book.getId()
+                            + " already exists", null);
+                }
+            }
         }
         CartItem cartItem = cartItemMapper.toModel(request);
         cartItem.setBook(book);
