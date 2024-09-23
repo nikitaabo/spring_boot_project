@@ -8,6 +8,7 @@ import com.example.spring.models.User;
 import com.example.spring.services.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class OrderController {
     @PostMapping
     @Operation(summary = "Place an order",
             description = "Place an order based on shopping cart's content")
-    public OrderDto placeOrder(@RequestBody OrderRequestDto request,
+    public OrderDto placeOrder(@RequestBody @Valid OrderRequestDto request,
                                Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return orderService.placeOrder(request, user);
@@ -52,7 +53,7 @@ public class OrderController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update order", description = "Update a status of order")
     public OrderDto changeStatus(@PathVariable @Positive Long id,
-                                 @RequestBody StatusDto newStatus) {
+                                 @RequestBody @Valid StatusDto newStatus) {
         return orderService.updateOrder(id, newStatus.status());
     }
 
