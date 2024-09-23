@@ -12,6 +12,7 @@ import com.example.spring.models.OrderItem;
 import com.example.spring.models.ShoppingCart;
 import com.example.spring.models.User;
 import com.example.spring.models.enums.Status;
+import com.example.spring.repositories.item.OrderItemRepository;
 import com.example.spring.repositories.order.OrderRepository;
 import com.example.spring.repositories.shopping.cart.ShoppingCartRepository;
 import java.math.BigDecimal;
@@ -28,9 +29,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public OrderDto placeOrder(OrderRequestDto request, User user) {
+        ShoppingCart cart = shoppingCartRepository.findByUserEmail(user.getEmail());
+        if (cart.getCartItems().isEmpty()) {
+            throw new RuntimeException("The shopping cart is empty");
+        }
         Order order = orderMapper.toModel(request);
         order.setUser(user);
         order.setStatus(Status.PENDING);
@@ -48,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrders(User user) {
         return orderRepository.findByUser(user).stream()
                 .map(orderMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -60,22 +66,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderItemDto> getOrderItemsOfOrder(Long id) {
-        Order order = orderRepository.findById(id)
+    public List<OrderItemDto> getOrderItemsOfOrder(Long id, User user) {
+        Order order = orderRepository.findByIdAndUser(id, user)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
-        return order.getOrderItems().stream()
-                .map(orderItemMapper::toDto)
-                .collect(Collectors.toList());
+        return orderItemMapper.toOrderItemDtoList(order.getOrderItems());
     }
 
     @Override
-    public OrderItemDto getOrderItemOfOrder(Long orderId, Long orderItemId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
-        OrderItem orderItemOfOrder = order.getOrderItems().stream()
-                .filter(orderItem -> orderItem.getId().equals(orderItemId))
-                .findFirst().orElseThrow(() -> new EntityNotFoundException("Order item not found"));
-        return orderItemMapper.toDto(orderItemOfOrder);
+    public OrderItemDto getOrderItemOfOrder(Long orderId, Long orderItemId, User user) {
+        OrderItem item = orderItemRepository.findByIdAndOrderIdAndOrderUserId(
+                orderItemId, orderId, user.getId()).orElseThrow(
+                    () -> new EntityNotFoundException("Order item not found"));
+        return orderItemMapper.toDto(item);
     }
 
     private Set<OrderItem> getOrderItems(User user) {

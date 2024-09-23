@@ -60,16 +60,20 @@ public class OrderController {
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/items")
     @Operation(summary = "Get items of order", description = "Get items of certain order")
-    public List<OrderItemDto> getOrderItems(@PathVariable @Positive Long id) {
-        return orderService.getOrderItemsOfOrder(id);
+    public List<OrderItemDto> getOrderItems(@PathVariable @Positive Long id,
+                                            Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return orderService.getOrderItemsOfOrder(id, user);
     }
 
     @PreAuthorize("hasRole('ROLE_USER') || hasRole('ROLE_ADMIN')")
     @GetMapping("/{orderId}/items/{orderItemId}")
     @Operation(summary = "Get item of order", description = "Get item of certain order")
     public OrderItemDto getOrderItemOfOrder(@PathVariable @Positive Long orderId,
-                                            @PathVariable @Positive Long orderItemId) {
-        return orderService.getOrderItemOfOrder(orderId, orderItemId);
+                                            @PathVariable @Positive Long orderItemId,
+                                            Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return orderService.getOrderItemOfOrder(orderId, orderItemId, user);
     }
 }
 

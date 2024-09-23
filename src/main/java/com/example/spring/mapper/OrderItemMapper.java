@@ -4,6 +4,8 @@ import com.example.spring.config.MapperConfig;
 import com.example.spring.dto.OrderItemDto;
 import com.example.spring.models.CartItem;
 import com.example.spring.models.OrderItem;
+import java.util.List;
+import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,4 +17,6 @@ public interface OrderItemMapper {
 
     @Mapping(source = "book.id", target = "bookId")
     OrderItemDto toDto(OrderItem orderItem);
+
+    List<OrderItemDto> toOrderItemDtoList(Set<OrderItem> orderItems);
 }
