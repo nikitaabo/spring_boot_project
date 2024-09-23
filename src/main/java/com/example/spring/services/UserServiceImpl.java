@@ -8,7 +8,6 @@ import com.example.spring.models.Role;
 import com.example.spring.models.User;
 import com.example.spring.models.enums.RoleName;
 import com.example.spring.repositories.role.RoleRepository;
-import com.example.spring.repositories.shopping.cart.ShoppingCartRepository;
 import com.example.spring.repositories.user.UserRepository;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingCartService shoppingCartService;
 
     @Override
