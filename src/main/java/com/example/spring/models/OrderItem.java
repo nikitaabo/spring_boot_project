@@ -13,15 +13,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "order_items")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE order_items SET is_deleted = TRUE WHERE id = ?")
-@SQLRestriction(value = "is_deleted = FALSE")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +30,5 @@ public class OrderItem {
     private Book book;
     private int quantity;
     private int price;
-    private boolean isDeleted = false;
 
 }

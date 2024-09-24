@@ -4,6 +4,7 @@ import com.example.spring.dto.OrderDto;
 import com.example.spring.dto.OrderItemDto;
 import com.example.spring.dto.OrderRequestDto;
 import com.example.spring.exception.EntityNotFoundException;
+import com.example.spring.exception.OrderProcessingException;
 import com.example.spring.mapper.OrderItemMapper;
 import com.example.spring.mapper.OrderMapper;
 import com.example.spring.models.CartItem;
@@ -35,16 +36,15 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto placeOrder(OrderRequestDto request, User user) {
         ShoppingCart cart = shoppingCartRepository.findByUserEmail(user.getEmail());
         if (cart.getCartItems().isEmpty()) {
-            throw new RuntimeException("The shopping cart is empty");
+            throw new OrderProcessingException("The shopping cart is empty");
         }
         Order order = orderMapper.toModel(request);
         order.setUser(user);
-        order.setStatus(Status.PENDING);
         Set<OrderItem> orderItems = getOrderItems(user);
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
         order.setOrderItems(orderItems);
         int sum = order.getOrderItems().stream()
-                .mapToInt(o -> o.getPrice() * o.getQuantity())
+                .mapToInt(orderItem -> orderItem.getPrice() * orderItem.getQuantity())
                 .sum();
         order.setTotal(BigDecimal.valueOf(sum));
         return orderMapper.toDto(orderRepository.save(order));

@@ -40,7 +40,7 @@ public class Order {
     private User user;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private Status status = Status.PENDING;
     @Column(nullable = false)
     private BigDecimal total;
     @Column(nullable = false)

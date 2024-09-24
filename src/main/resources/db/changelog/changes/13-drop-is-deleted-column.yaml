@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13-drop-is-deleted-column
+      author: mateacademy
+      changes:
+        - dropColumn:
+            columnName: is_deleted
+            tableName: order_items
