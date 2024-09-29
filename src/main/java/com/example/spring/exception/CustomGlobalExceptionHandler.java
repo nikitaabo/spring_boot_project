@@ -48,4 +48,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         ErrorResponse errorResponse = new ErrorResponse("Registration failed", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

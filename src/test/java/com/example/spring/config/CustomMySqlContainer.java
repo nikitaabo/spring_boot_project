@@ -3,7 +3,7 @@ package com.example.spring.config;
 import org.testcontainers.containers.MySQLContainer;
 
 public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
-    private static final String DM_IMAGE = "mysql:8";
+    private static final String DM_IMAGE = "mysql:8.0.33";
     private static CustomMySqlContainer mySqlContainer;
 
     public CustomMySqlContainer() {
