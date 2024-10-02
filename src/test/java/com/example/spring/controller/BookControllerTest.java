@@ -1,6 +1,5 @@
 package com.example.spring.controller;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,6 +30,17 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(
+        scripts = {
+                "classpath:database/books/add-books.sql",
+                "classpath:database/categories/add-categories.sql"},
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
+        scripts = {"classpath:database/books/clear-books-categories.sql",
+                "classpath:database/categories/clear-categories.sql"},
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+)
 public class BookControllerTest {
     protected static MockMvc mockMvc;
     @Autowired
@@ -42,18 +52,6 @@ public class BookControllerTest {
                 .webAppContextSetup(applicationContext)
                 .apply(springSecurity())
                 .build();
-
-        mockMvc.perform(post("/categories")
-                        .content("{\"name\":\"Category 1\"}")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(user("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(post("/categories")
-                        .content("{\"name\":\"Category 2\"}")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(user("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -105,25 +103,16 @@ public class BookControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @DisplayName("Get a book by id")
-    @Sql(
-            scripts = {"classpath:database/books/clear-books.sql",
-                    "classpath:database/books/add-book.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/delete-book.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
     void getBookById_ValidId_Success() throws Exception {
         // Given
         BookDto expected = new BookDto();
         expected.setId(1L);
-        expected.setTitle("Book Title");
-        expected.setAuthor("Author Name");
-        expected.setIsbn("1234567890");
-        expected.setPrice(BigDecimal.valueOf(20));
-        expected.setDescription("Book description");
-        expected.setCoverImage("cover_image_url.jpg");
+        expected.setTitle("Book 1");
+        expected.setAuthor("Author 1");
+        expected.setIsbn("1111111111");
+        expected.setPrice(BigDecimal.valueOf(11));
+        expected.setDescription("Description for Book 1");
+        expected.setCoverImage("cover_image_1.jpg");
         expected.setCategoriesIds(null);
 
         // When
@@ -150,15 +139,6 @@ public class BookControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @DisplayName("Delete a book by id")
-    @Sql(
-            scripts = {"classpath:database/books/clear-books.sql",
-                    "classpath:database/books/add-book.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/delete-book.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
     void deleteBookById_ValidId_Success() throws Exception {
         // Given
 
@@ -180,14 +160,6 @@ public class BookControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     @DisplayName("Get all books")
-    @Sql(
-            scripts = "classpath:database/books/add-books.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/clear-books.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
     void getAll_GivenBooksInStore_ShouldReturnAllBooks() throws Exception {
         // Given
         BookDto book1 = new BookDto();
