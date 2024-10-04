@@ -51,7 +51,8 @@ public class CategoryControllerTest {
         // Given
         CategoryDto requestDto = new CategoryDto("Category 1", "Description");
 
-        CategoryDto expected = new CategoryDto(requestDto.name(), requestDto.description());
+        CategoryResponseDto expected = new CategoryResponseDto(1L, requestDto.name(),
+                requestDto.description());
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
@@ -66,6 +67,10 @@ public class CategoryControllerTest {
         CategoryResponseDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 CategoryResponseDto.class);
+        checkAssertions(expected, actual);
+    }
+
+    void checkAssertions(CategoryResponseDto expected, CategoryResponseDto actual) {
         assertNotNull(actual);
         assertNotNull(actual.id());
         assertEquals(expected.name(), actual.name());
@@ -98,10 +103,7 @@ public class CategoryControllerTest {
         CategoryResponseDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 CategoryResponseDto.class);
-        assertNotNull(actual);
-        assertNotNull(actual.id());
-        assertEquals(expected.name(), actual.name());
-        assertEquals(expected.description(), actual.description());
+        checkAssertions(expected, actual);
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -192,7 +194,6 @@ public class CategoryControllerTest {
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof ConstraintViolationException,
                         "Expected ConstraintViolationException"));
-
         // Then
     }
 }

@@ -93,15 +93,7 @@ public class BookControllerTest {
         // Then
         BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 BookDto.class);
-        assertNotNull(actual);
-        assertNotNull(actual.getId());
-        assertEquals(expected.getTitle(), actual.getTitle());
-        assertEquals(expected.getAuthor(), actual.getAuthor());
-        assertEquals(expected.getIsbn(), actual.getIsbn());
-        assertEquals(expected.getPrice(), actual.getPrice());
-        assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getCoverImage(), actual.getCoverImage());
-        assertEquals(expected.getCategoriesIds(), actual.getCategoriesIds());
+        checkAssertions(expected, actual);
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -109,14 +101,7 @@ public class BookControllerTest {
     @DisplayName("Get a book by id")
     void getBookById_ValidId_Success() throws Exception {
         // Given
-        BookDto expected = new BookDto();
-        expected.setId(1L);
-        expected.setTitle("Book 1");
-        expected.setAuthor("Author 1");
-        expected.setIsbn("1111111111");
-        expected.setPrice(BigDecimal.valueOf(11));
-        expected.setDescription("Description for Book 1");
-        expected.setCoverImage("cover_image_1.jpg");
+        BookDto expected = createBookDto(0);
         expected.setCategoriesIds(null);
 
         // When
@@ -128,6 +113,10 @@ public class BookControllerTest {
         // Then
         BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 BookDto.class);
+        checkAssertions(expected, actual);
+    }
+
+    void checkAssertions(BookDto expected, BookDto actual) {
         assertNotNull(actual);
         assertNotNull(actual.getId());
         assertEquals(expected.getTitle(), actual.getTitle());
@@ -164,37 +153,11 @@ public class BookControllerTest {
     @DisplayName("Get all books")
     void getAll_GivenBooksInStore_ShouldReturnAllBooks() throws Exception {
         // Given
-        BookDto book1 = new BookDto();
-        book1.setId(1L);
-        book1.setTitle("Book 1");
-        book1.setAuthor("Author 1");
-        book1.setIsbn("1111111111");
-        book1.setPrice(BigDecimal.valueOf(1));
-        book1.setDescription("Description for Book 1");
-        book1.setCoverImage("cover_image_1.jpg");
-
-        BookDto book2 = new BookDto();
-        book2.setId(2L);
-        book2.setTitle("Book 2");
-        book2.setAuthor("Author 2");
-        book2.setIsbn("2222222222");
-        book2.setPrice(BigDecimal.valueOf(16));
-        book2.setDescription("Description for Book 2");
-        book2.setCoverImage("cover_image_2.jpg");
-
-        BookDto book3 = new BookDto();
-        book3.setId(3L);
-        book3.setTitle("Book 3");
-        book3.setAuthor("Author 3");
-        book3.setIsbn("3333333333");
-        book3.setPrice(BigDecimal.valueOf(21));
-        book3.setDescription("Description for Book 3");
-        book3.setCoverImage("cover_image_3.jpg");
-
         List<BookDto> expected = new ArrayList<>();
-        expected.add(book1);
-        expected.add(book2);
-        expected.add(book3);
+        for (int i = 0; i < 3; i++) {
+            BookDto book = createBookDto(i);
+            expected.add(book);
+        }
 
         // When
         MvcResult result = mockMvc.perform(get("/books")
@@ -207,6 +170,18 @@ public class BookControllerTest {
                 BookDto[].class);
         assertEquals(expected.size(), actual.length);
         reflectionEquals(expected, actual, "categoriesIds");
+    }
+
+    BookDto createBookDto(int number) {
+        BookDto book = new BookDto();
+        book.setId((long) number);
+        book.setTitle("Book " + (number + 1));
+        book.setAuthor("Author " + (number + 1));
+        book.setIsbn(String.valueOf(number + 1).repeat(10));
+        book.setPrice(BigDecimal.valueOf(11 + number * 5L));
+        book.setDescription("Description for Book " + (number + 1));
+        book.setCoverImage("cover_image_" + (number + 1) + ".jpg");
+        return book;
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -223,7 +198,6 @@ public class BookControllerTest {
                 .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof ConstraintViolationException,
                         "Expected ConstraintViolationException"));
-
         // Then
     }
 }
