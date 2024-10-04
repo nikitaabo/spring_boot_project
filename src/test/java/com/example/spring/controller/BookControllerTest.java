@@ -1,5 +1,9 @@
 package com.example.spring.controller;
 
+import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,6 +14,7 @@ import com.example.spring.dto.BookDto;
 import com.example.spring.dto.CreateBookRequestDto;
 import com.example.spring.exception.EntityNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +32,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(
@@ -89,15 +93,15 @@ public class BookControllerTest {
         // Then
         BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 BookDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.getId());
-        Assertions.assertEquals(expected.getTitle(), actual.getTitle());
-        Assertions.assertEquals(expected.getAuthor(), actual.getAuthor());
-        Assertions.assertEquals(expected.getIsbn(), actual.getIsbn());
-        Assertions.assertEquals(expected.getPrice(), actual.getPrice());
-        Assertions.assertEquals(expected.getDescription(), actual.getDescription());
-        Assertions.assertEquals(expected.getCoverImage(), actual.getCoverImage());
-        Assertions.assertEquals(expected.getCategoriesIds(), actual.getCategoriesIds());
+        assertNotNull(actual);
+        assertNotNull(actual.getId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getPrice(), actual.getPrice());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCoverImage(), actual.getCoverImage());
+        assertEquals(expected.getCategoriesIds(), actual.getCategoriesIds());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -124,16 +128,15 @@ public class BookControllerTest {
         // Then
         BookDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 BookDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.getId());
-        Assertions.assertEquals(expected.getTitle(), actual.getTitle());
-        Assertions.assertEquals(expected.getAuthor(), actual.getAuthor());
-        Assertions.assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertNotNull(actual);
+        assertNotNull(actual.getId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
         Assertions.assertEquals(0, expected.getPrice()
                 .compareTo(actual.getPrice()), "Prices should be equal");
-        Assertions.assertEquals(expected.getDescription(), actual.getDescription());
-        Assertions.assertEquals(expected.getCoverImage(), actual.getCoverImage());
-
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCoverImage(), actual.getCoverImage());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -151,10 +154,9 @@ public class BookControllerTest {
         mockMvc.perform(get("/books/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> Assertions.assertTrue(
+                .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof EntityNotFoundException,
                         "Expected EntityNotFoundException"));
-        ;
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -203,7 +205,25 @@ public class BookControllerTest {
         // Then
         BookDto[] actual = objectMapper.readValue(result.getResponse().getContentAsByteArray(),
                 BookDto[].class);
-        Assertions.assertEquals(expected.size(), actual.length);
-        EqualsBuilder.reflectionEquals(expected, actual, "categoriesIds");
+        assertEquals(expected.size(), actual.length);
+        reflectionEquals(expected, actual, "categoriesIds");
+    }
+
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @Test
+    @DisplayName("Get a book by negative id")
+    void getBookById_NegativeId_GetException() throws Exception {
+        // Given
+        long invalidId = -1L;
+
+        // When
+        mockMvc.perform(get("/books/{id}", invalidId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof ConstraintViolationException,
+                        "Expected ConstraintViolationException"));
+
+        // Then
     }
 }

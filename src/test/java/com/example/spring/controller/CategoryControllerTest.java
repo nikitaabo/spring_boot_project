@@ -1,5 +1,8 @@
 package com.example.spring.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,10 +13,10 @@ import com.example.spring.dto.CategoryDto;
 import com.example.spring.dto.CategoryResponseDto;
 import com.example.spring.exception.EntityNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,10 +66,10 @@ public class CategoryControllerTest {
         CategoryResponseDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 CategoryResponseDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.id());
-        Assertions.assertEquals(expected.name(), actual.name());
-        Assertions.assertEquals(expected.description(), actual.description());
+        assertNotNull(actual);
+        assertNotNull(actual.id());
+        assertEquals(expected.name(), actual.name());
+        assertEquals(expected.description(), actual.description());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -95,10 +98,10 @@ public class CategoryControllerTest {
         CategoryResponseDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 CategoryResponseDto.class);
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(actual.id());
-        Assertions.assertEquals(expected.name(), actual.name());
-        Assertions.assertEquals(expected.description(), actual.description());
+        assertNotNull(actual);
+        assertNotNull(actual.id());
+        assertEquals(expected.name(), actual.name());
+        assertEquals(expected.description(), actual.description());
     }
 
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -125,7 +128,7 @@ public class CategoryControllerTest {
         mockMvc.perform(get("/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> Assertions.assertTrue(
+                .andExpect(result -> assertTrue(
                         result.getResolvedException() instanceof EntityNotFoundException,
                         "Expected EntityNotFoundException"));
         ;
@@ -162,7 +165,34 @@ public class CategoryControllerTest {
         CategoryResponseDto[] actual = objectMapper.readValue(
                 result.getResponse().getContentAsByteArray(),
                 CategoryResponseDto[].class);
-        Assertions.assertEquals(expected.size(), actual.length);
-        Assertions.assertEquals(expected, Arrays.stream(actual).toList());
+        assertEquals(expected.size(), actual.length);
+        assertEquals(expected, Arrays.stream(actual).toList());
+    }
+
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @Test
+    @DisplayName("Get a category by negative id")
+    @Sql(
+            scripts = {"classpath:database/categories/clear-categories.sql",
+                    "classpath:database/categories/add-category.sql"},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
+            scripts = "classpath:database/categories/delete-category.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+    )
+    void getCategoryById_NegativeId_GetException() throws Exception {
+        // Given
+        long invalidId = -1L;
+
+        // When
+        mockMvc.perform(get("/categories/{id}", invalidId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(
+                        result.getResolvedException() instanceof ConstraintViolationException,
+                        "Expected ConstraintViolationException"));
+
+        // Then
     }
 }
