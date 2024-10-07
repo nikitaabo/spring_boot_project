@@ -1,1 +1,1 @@
-DELETE from users_roles;
+DELETE FROM users_roles;

@@ -1,0 +1,2 @@
+INSERT INTO users (id, email, password, first_name, last_name, shipping_address, is_deleted)
+VALUES (1, 'testUser@test.com', '$2a$12$ofMPKjYenNJLmXy9K62S1OHAkY//3K/4nfU8eYc3illZmB6ZBrQEK', 'John', 'Doe', '123 Test St', false);
