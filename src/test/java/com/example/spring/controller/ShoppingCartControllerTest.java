@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.spring.dto.CartItemDto;
+import com.example.spring.dto.CartItemUpdateDto;
 import com.example.spring.dto.ShoppingCartDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Set;
@@ -35,9 +37,7 @@ import org.springframework.web.context.WebApplicationContext;
                 "classpath:database/users-roles/add-user-role.sql",
                 "classpath:database/books/add-book.sql",
                 "classpath:database/cart.items/add-cart-items.sql"
-        },
-        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-)
+        })
 @Sql(
         scripts = {
                 "classpath:database/cart.items/clear-cart-items.sql",
@@ -94,5 +94,29 @@ public class ShoppingCartControllerTest {
         mockMvc.perform(delete("/cart/items/{id}", cartItemId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithUserDetails("testUser@test.com")
+    @DisplayName("Update an item in the shopping cart")
+    void updateCartItem_ValidRequest_Success() throws Exception {
+        // Given
+        Long cartItemId = 1L;
+        CartItemUpdateDto updatedCartItem = new CartItemUpdateDto(5);
+
+        String jsonRequest = objectMapper.writeValueAsString(updatedCartItem);
+
+        // When
+        MvcResult result = mockMvc.perform(put("/cart/items/{id}", cartItemId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Then
+        CartItemDto actualCartItem = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CartItemDto.class);
+        assertNotNull(actualCartItem);
+        assertEquals(updatedCartItem.quantity(), actualCartItem.quantity());
     }
 }
