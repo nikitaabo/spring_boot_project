@@ -122,3 +122,6 @@ Just import the collection and you can immediately start sending requests!
 
 This project was a great learning experience and showcases my ability to build a back-end of application with modern Java technologies. 
 Feel free to explore and contribute!
+
+Also I'm adding the video where I show how my application works:
+https://www.loom.com/share/28f23fd3422e475cab6ccef5e6946d1c?sid=3e09aff2-5020-44a9-9b7b-5cdf1d5c4315
