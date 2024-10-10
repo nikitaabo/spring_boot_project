@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import com.example.spring.dto.CartItemDto;
 import com.example.spring.dto.RequestCartItemDto;
 import com.example.spring.dto.ShoppingCartDto;
-import com.example.spring.exception.DataProcessingException;
 import com.example.spring.exception.EntityNotFoundException;
+import com.example.spring.exception.NotUniqueCartItem;
 import com.example.spring.mapper.CartItemMapper;
 import com.example.spring.mapper.ShoppingCartMapper;
 import com.example.spring.models.Book;
@@ -106,7 +106,7 @@ public class ShoppingCartServiceTest {
 
     @Test
     @DisplayName("Should throw DataProcessingException when existing cart item is provided")
-    public void addCartItem_NotExistingBook_ShouldThrowDataProcessingException() {
+    public void addCartItem_ExistingBook_ShouldThrowDataProcessingException() {
         // Given
         User user = new User();
         user.setEmail("user@example.com");
@@ -129,7 +129,7 @@ public class ShoppingCartServiceTest {
         when(cartItemRepository.findByBook(book)).thenReturn(List.of(cartItem));
 
         // When & Then
-        assertThrows(DataProcessingException.class,
+        assertThrows(NotUniqueCartItem.class,
                 () -> shoppingCartService.addCartItem(user, requestCartItemDto));
     }
 
