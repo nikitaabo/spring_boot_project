@@ -4,8 +4,8 @@ import com.example.spring.dto.CartItemDto;
 import com.example.spring.dto.CartItemUpdateDto;
 import com.example.spring.dto.RequestCartItemDto;
 import com.example.spring.dto.ShoppingCartDto;
-import com.example.spring.exception.DataProcessingException;
 import com.example.spring.exception.EntityNotFoundException;
+import com.example.spring.exception.NotUniqueCartItem;
 import com.example.spring.mapper.CartItemMapper;
 import com.example.spring.mapper.ShoppingCartMapper;
 import com.example.spring.models.Book;
@@ -45,7 +45,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             List<CartItem> cartItemsByBook = cartItemRepository.findByBook(book);
             for (CartItem cartItem : cartItemsByBook) {
                 if (Objects.equals(cartItem.getShoppingCart().getId(), shoppingCart.getId())) {
-                    throw new DataProcessingException("Cart item with book " + book.getId()
+                    throw new NotUniqueCartItem("Cart item with book " + book.getId()
                             + " already exists", null);
                 }
             }

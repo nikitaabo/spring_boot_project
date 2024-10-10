@@ -42,7 +42,8 @@ import org.springframework.web.context.WebApplicationContext;
 )
 @Sql(
         scripts = {"classpath:database/books/clear-books-categories.sql",
-                "classpath:database/categories/clear-categories.sql"},
+                "classpath:database/categories/clear-categories.sql",
+                "classpath:database/books/clear-books.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
 public class BookControllerTest {
