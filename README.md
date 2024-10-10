@@ -37,11 +37,11 @@ Users can browse books, add them to the shopping cart, and place orders, while a
 - **Maven** for dependency management
 - **Docker** and **Docker Compose** for setting up the environment
 
-### Steps to Setup Locally:
+### Steps to Launch Application:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/online-book-store.git
+    git clone git@github.com:your-username/spring_boot_project.git
     cd online-book-store
     ```
 
