@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "81ced6b6-2e3e-4fb9-b2a8-ae2b70450993",
+		"name": "Working with user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30514767"
+	},
+	"item": [
+		{
+			"name": "register a new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"nikita.doe@example.com\",\n  \"password\": \"pass1234\",\n  \"repeatedPassword\": \"pass1234\",\n  \"firstName\": \"nikita\",\n  \"lastName\": \"Doe\",\n  \"shippingAddress\": \"123 Main St, City, Country\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/auth/registration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"auth",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin.doe@example.com\",\n  \"password\": \"pass1234\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,184 @@
+{
+	"info": {
+		"_postman_id": "beeb5e2e-e10f-4d65-8059-d7c7831d8520",
+		"name": "Working with orders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30514767"
+	},
+	"item": [
+		{
+			"name": "place an order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrb3N0eWEuZG9lQGV4YW1wbGUuY29tIiwiaWF0IjoxNzI3MTgxNzYzLCJleHAiOjE3MjcxODIwNjN9.RIZYhAZcqKT9dtDoXnO55K9eg2yGUrtU9YvP_UaHWxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shippingAddress\":\"Kyiv, Shevchenko ave, 1\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user's orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrb3N0eWEuZG9lQGV4YW1wbGUuY29tIiwiaWF0IjoxNzI3MjcyMzE0LCJleHAiOjE3MjcyNzI2MTR9.YSwdsmsYvxtHCzsSNp3_Iu31UJcWrdiploFeXrnsBuc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update a status of order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbi5kb2VAZXhhbXBsZS5jb20iLCJpYXQiOjE3MjcxMDE2NzYsImV4cCI6MTcyNzEwMTk3Nn0.vh4F4o_l0rahuebJLAvORw0LVMXFqw4zph8rYEM6WTk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\":\"DELIVERED\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/orders/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get order items from order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdmFuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyNzEwMTg2OCwiZXhwIjoxNzI3MTAyMTY4fQ.dfcb4Tkz4SdeNXuAN8fLK2qtGMCO4ubBp5_YVR2xHBM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/orders/2/items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"2",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get certain item in order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpdmFuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyNzEwMTg2OCwiZXhwIjoxNzI3MTAyMTY4fQ.dfcb4Tkz4SdeNXuAN8fLK2qtGMCO4ubBp5_YVR2xHBM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/orders/2/items/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"orders",
+						"2",
+						"items",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
